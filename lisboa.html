@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lisboa</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+      position: relative;
+      background-color: black;
+    }
+
+    img {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <img src="lisboa.jpg" alt="Foto de Athenas">
+  <canvas id="fireworks"></canvas>
+
+  <script>
+    const canvas = document.getElementById('fireworks');
+    const ctx = canvas.getContext('2d');
+    let w = canvas.width = window.innerWidth;
+    let h = canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    });
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    let particles = [];
+
+    function createFirework() {
+      const x = random(0, w);
+      const y = random(0, h / 2);
+      const colors = ['#ff0', '#f00', '#0f0', '#0ff', '#f0f'];
+      const color = colors[Math.floor(random(0, colors.length))];
+      for (let i = 0; i < 50; i++) {
+        particles.push({
+          x, y,
+          dx: random(-3, 3),
+          dy: random(-3, 3),
+          alpha: 1,
+          color
+        });
+      }
+    }
+
+    let animationRunning = true;
+
+    function animate() {
+        if (!animationRunning && particles.length === 0) return;
+
+        ctx.clearRect(0, 0, w, h); // Agora o fundo é transparente
+
+        particles = particles.filter(p => p.alpha > 0);
+        particles.forEach(p => {
+            p.x += p.dx;
+            p.y += p.dy;
+            p.alpha -= 0.01;
+            ctx.fillStyle = p.color;
+            ctx.globalAlpha = p.alpha;
+            ctx.beginPath();
+            ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        ctx.globalAlpha = 1;
+        requestAnimationFrame(animate);
+    }
+
+    // Iniciar fogos
+    const fireworkInterval = setInterval(createFirework, 300);
+
+    // Parar após 3 segundos
+    setTimeout(() => {
+      clearInterval(fireworkInterval);
+      animationRunning = false;
+    }, 3000);
+
+    animate();
+  </script>
+</body>
+</html>
