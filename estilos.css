@@ -10,16 +10,17 @@ body {
 }
 
 .button a {
+  width: 250px;
+  text-align: center;
   color: white;
   font-family: Helvetica, sans-serif;
   font-weight: bold;
   font-size: 36px;
-  text-align: center;
   text-decoration: none;
   background-color: #FFA12B;
   display: block;
   position: relative;
-  padding: 20px 40px;
+  padding: 20px 0;
 
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
   text-shadow: 0px 1px 0px #000;
@@ -33,6 +34,7 @@ body {
   -moz-border-radius: 5px;
   border-radius: 5px;
 }
+
 
 .button a:active {
   top: 10px;
