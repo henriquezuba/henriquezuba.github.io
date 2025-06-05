@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Foto 1</title>
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      height: 100%;
+    }
+    img {
+      width: 100%;
+      height: auto;
+      display: block;
+      z-index: 1;
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 2;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+  <img src="fotos/athenas.jpg" alt="Foto de Athenas">
+  <canvas id="fireworks"></canvas>
+
+  <script>
+    // Efeito simples de fogos
+    const canvas = document.getElementById('fireworks');
+    const ctx = canvas.getContext('2d');
+    let w = canvas.width = window.innerWidth;
+    let h = canvas.height = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      w = canvas.width = window.innerWidth;
+      h = canvas.height = window.innerHeight;
+    });
+
+    function random(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    let particles = [];
+
+    function createFirework() {
+      const x = random(0, w);
+      const y = random(0, h / 2);
+      const colors = ['#ff0', '#f00', '#0f0', '#0ff', '#f0f'];
+      const color = colors[Math.floor(random(0, colors.length))];
+      for (let i = 0; i < 50; i++) {
+        particles.push({
+          x, y,
+          dx: random(-3, 3),
+          dy: random(-3, 3),
+          alpha: 1,
+          color
+        });
+      }
+    }
+
+    function animate() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+      ctx.fillRect(0, 0, w, h);
+      particles.forEach((p, i) => {
+        p.x += p.dx;
+        p.y += p.dy;
+        p.alpha -= 0.01;
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = p.alpha;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+        ctx.fill();
+        if (p.alpha <= 0) particles.splice(i, 1);
+      });
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(animate);
+    }
+
+    setInterval(createFirework, 800);
+    animate();
+  </script>
+</body>
+</html>
