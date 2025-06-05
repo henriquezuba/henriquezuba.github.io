@@ -2,22 +2,29 @@
 <html lang="pt-BR">
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Foto 1</title>
+  <title>Athenas</title>
   <style>
     body, html {
       margin: 0;
       padding: 0;
       overflow: hidden;
       height: 100%;
+      position: relative;
+      background-color: black;
     }
+
     img {
+      position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
-      height: auto;
-      display: block;
+      height: 100%;
+      object-fit: cover;
       z-index: 1;
     }
+
     canvas {
-      position: fixed;
+      position: absolute;
       top: 0;
       left: 0;
       z-index: 2;
@@ -26,11 +33,10 @@
   </style>
 </head>
 <body>
-  <img src="athenas.jpg" alt="Foto de Athenas">
+  <img src="fotos/athenas.jpg" alt="Foto de Athenas">
   <canvas id="fireworks"></canvas>
 
   <script>
-    // Efeito simples de fogos
     const canvas = document.getElementById('fireworks');
     const ctx = canvas.getContext('2d');
     let w = canvas.width = window.innerWidth;
@@ -63,10 +69,16 @@
       }
     }
 
+    let animationRunning = true;
+
     function animate() {
+      if (!animationRunning && particles.length === 0) return;
+
       ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
       ctx.fillRect(0, 0, w, h);
-      particles.forEach((p, i) => {
+
+      particles = particles.filter(p => p.alpha > 0);
+      particles.forEach(p => {
         p.x += p.dx;
         p.y += p.dy;
         p.alpha -= 0.01;
@@ -75,13 +87,21 @@
         ctx.beginPath();
         ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
         ctx.fill();
-        if (p.alpha <= 0) particles.splice(i, 1);
       });
+
       ctx.globalAlpha = 1;
       requestAnimationFrame(animate);
     }
 
-    setInterval(createFirework, 800);
+    // Iniciar fogos
+    const fireworkInterval = setInterval(createFirework, 300);
+
+    // Parar após 3 segundos
+    setTimeout(() => {
+      clearInterval(fireworkInterval);
+      animationRunning = false;
+    }, 3000);
+
     animate();
   </script>
 </body>
